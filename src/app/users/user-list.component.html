@@ -1,3 +1,27 @@
-<p>
-users works!
-</p>
+<div class="card">
+  <div class="card-header">
+    {{pageTitle}}
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table mb-0" *ngIf="users$ | async as users">
+        <thead>
+          <tr>
+            <th>FirstName</th>
+            <th>MiddleName</th>
+            <th>LastName</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let user of users">
+          <tr>
+            <td>{{ user.firstName }}</td>
+            <td>{{ user.middleName }}</td>
+            <td>{{ user.lastName }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
