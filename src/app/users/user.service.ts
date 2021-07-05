@@ -1,19 +1,31 @@
 import { Injectable } from '@angular/core';
-import { throwError, Observable } from 'rxjs';
+import { throwError, Observable, from } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { User } from './user';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, mergeMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private usersUrl = 'api/users';
+  private usersDetailUrl = 'api/usersDetails';
 
-  users$ = this.http.get<User[]>(this.usersUrl).pipe(
-    tap(data => console.log('Users: ', JSON.stringify(data))),
-    catchError(this.handleError)
-  );
+  users$ = this.http
+    .get<User[]>(this.usersUrl)
+    .pipe(catchError(this.handleError));
+
+  usersInDetail$ = this.http
+    .get<User[]>(this.usersUrl)
+    .pipe(
+      mergeMap(flatUsers =>
+        from(flatUsers).pipe(
+          mergeMap(flatUser =>
+            this.http.get<User>(`${this.usersDetailUrl}/${flatUser.id}`)
+          )
+        )
+      )
+    );
 
   constructor(private http: HttpClient) {}
 
