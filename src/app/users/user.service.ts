@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserData } from './user-data';
-import { of, throwError, Observable } from 'rxjs';
+import { throwError, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { User } from './user';
 import { catchError, tap } from 'rxjs/operators';
@@ -11,8 +10,7 @@ import { catchError, tap } from 'rxjs/operators';
 export class UserService {
   private usersUrl = 'api/users';
 
-  users$ = of(UserData.users);
-  usersHttp$ = this.http.get<User[]>(this.usersUrl).pipe(
+  users$ = this.http.get<User[]>(this.usersUrl).pipe(
     tap(data => console.log('Users: ', JSON.stringify(data))),
     catchError(this.handleError)
   );
@@ -20,8 +18,6 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   private handleError(err: any): Observable<never> {
-    // in a real world app, we may send the server to some remote logging infrastructure
-    // instead of just logging it to the console
     let errorMessage: string;
     if (err.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.
