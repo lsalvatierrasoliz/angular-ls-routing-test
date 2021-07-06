@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { throwError, Observable, from } from 'rxjs';
+import { throwError, Observable, from, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { User } from './user';
 import { catchError, mergeMap } from 'rxjs/operators';
@@ -9,23 +9,23 @@ import { catchError, mergeMap } from 'rxjs/operators';
 })
 export class UserService {
   private usersUrl = 'api/users';
-  private usersDetailUrl = 'api/usersDetails';
 
-  users$ = this.http
+  users$: Observable<User[]> = this.http
     .get<User[]>(this.usersUrl)
     .pipe(catchError(this.handleError));
 
   usersInDetail$ = this.http
     .get<User[]>(this.usersUrl)
     .pipe(
-      mergeMap(flatUsers =>
-        from(flatUsers).pipe(
-          mergeMap(flatUser =>
-            this.http.get<User>(`${this.usersDetailUrl}/${flatUser.id}`)
+      mergeMap(userList =>
+        from(userList).pipe(
+          mergeMap(userItem =>
+            this.http.get<User>(`${this.usersUrl}/${userItem.id}`)
           )
         )
       )
-    );
+    )
+    .subscribe(console.log);
 
   constructor(private http: HttpClient) {}
 

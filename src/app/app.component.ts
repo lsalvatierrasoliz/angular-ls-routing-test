@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
     of([2, 4, 6, 8])
       .pipe(
         map(numbers => from(numbers)),
-        mergeMap(number => of(number))
+          mergeMap(number => of(number))
       )
       .subscribe(console.log);
 
